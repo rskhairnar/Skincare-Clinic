@@ -1,6 +1,6 @@
 import AppointmentList from '@/components/appointments/AppointmentList';
 
-export const dynamic = 'force-dynamic';
+
 
 
 

@@ -3,7 +3,7 @@ import { prisma } from '@/lib/prisma';
 import { verifyToken } from '@/lib/auth';
 
 // Force dynamic for API routes
-export const dynamic = 'force-dynamic';
+
 
 function getAuthUser(req) {
   const token = req.headers.get('authorization')?.replace('Bearer ', '');

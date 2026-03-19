@@ -5,7 +5,7 @@ import { writeFile } from 'fs/promises';
 import path from 'path';
 
 // Force dynamic for API routes
-export const dynamic = 'force-dynamic';
+
 
 function getAuthUser(req) {
   const token = req.headers.get('authorization')?.replace('Bearer ', '');
