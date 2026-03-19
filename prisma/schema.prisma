@@ -1,0 +1,165 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String   @unique
+  password  String
+  role      Role     @default(DOCTOR_ADMIN)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+
+  doctor    Doctor?
+  blogs     Blog[]
+
+  @@map("users")
+}
+
+enum Role {
+  SUPER_ADMIN
+  DOCTOR_ADMIN
+}
+
+model Doctor {
+  id              Int      @id @default(autoincrement())
+  userId          Int      @unique @map("user_id")
+  specialization  String
+  experience      Int
+  profileImage    String?  @map("profile_image")
+  phone           String
+  address         String?
+  status          Status   @default(ACTIVE)
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+  deletedAt       DateTime? @map("deleted_at")
+
+  user            User     @relation(fields: [userId], references: [id])
+  treatments      DoctorTreatment[]
+  appointments    Appointment[]
+  availability    Availability[]
+
+  @@map("doctors")
+}
+
+enum Status {
+  ACTIVE
+  INACTIVE
+}
+
+model Treatment {
+  id          Int      @id @default(autoincrement())
+  name        String
+  description String
+  duration    Int
+  price       Decimal  @db.Decimal(10, 2)
+  status      Status   @default(ACTIVE)
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  deletedAt   DateTime? @map("deleted_at")
+
+  doctors      DoctorTreatment[]
+  appointments Appointment[]
+
+  @@map("treatments")
+}
+
+model DoctorTreatment {
+  doctorId    Int @map("doctor_id")
+  treatmentId Int @map("treatment_id")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  doctor      Doctor    @relation(fields: [doctorId], references: [id])
+  treatment   Treatment @relation(fields: [treatmentId], references: [id])
+
+  @@id([doctorId, treatmentId])
+  @@map("doctor_treatments")
+}
+
+model Appointment {
+  id           Int               @id @default(autoincrement())
+  patientName  String            @map("patient_name")
+  patientPhone String            @map("patient_phone")
+  patientEmail String?           @map("patient_email")
+  doctorId     Int               @map("doctor_id")
+  treatmentId  Int               @map("treatment_id")
+  dateTime     DateTime          @map("date_time")
+  status       AppointmentStatus @default(PENDING)
+  notes        String?
+  createdAt    DateTime          @default(now()) @map("created_at")
+  updatedAt    DateTime          @updatedAt @map("updated_at")
+  deletedAt    DateTime?         @map("deleted_at")
+
+  doctor       Doctor            @relation(fields: [doctorId], references: [id])
+  treatment    Treatment         @relation(fields: [treatmentId], references: [id])
+
+  @@map("appointments")
+}
+
+enum AppointmentStatus {
+  PENDING
+  CONFIRMED
+  COMPLETED
+  CANCELLED
+  REJECTED
+}
+
+model Availability {
+  id          Int       @id @default(autoincrement())
+  doctorId    Int       @map("doctor_id")
+  dayOfWeek   Int       @map("day_of_week")
+  startTime   String    @map("start_time")
+  endTime     String    @map("end_time")
+  isBlocked   Boolean   @default(false) @map("is_blocked")
+  blockDate   DateTime? @map("block_date")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+
+  doctor      Doctor    @relation(fields: [doctorId], references: [id])
+
+  @@map("availability")
+}
+
+model Blog {
+  id        Int         @id @default(autoincrement())
+  title     String
+  slug      String      @unique
+  content   String
+  image     String?
+  authorId  Int         @map("author_id")
+  status    BlogStatus  @default(DRAFT)
+  createdAt DateTime    @default(now()) @map("created_at")
+  updatedAt DateTime    @updatedAt @map("updated_at")
+  deletedAt DateTime?   @map("deleted_at")
+
+  author    User        @relation(fields: [authorId], references: [id])
+
+  @@map("blogs")
+}
+
+enum BlogStatus {
+  DRAFT
+  PUBLISHED
+}
+
+model Settings {
+  id              Int      @id @default(autoincrement())
+  clinicName      String   @map("clinic_name")
+  logo            String?
+  email           String
+  phone           String
+  address         String?
+  timezone        String   @default("UTC")
+  slotDuration    Int      @default(30) @map("slot_duration")
+  bookingBuffer   Int      @default(60) @map("booking_buffer")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  @@map("settings")
+}
