@@ -3,7 +3,7 @@ import { prisma } from '@/lib/prisma';
 import { comparePassword, generateToken } from '@/lib/auth';
 
 // Force dynamic for API routes
-export const dynamic = 'force-dynamic';
+
 
 export async function POST(req) {
   try {
