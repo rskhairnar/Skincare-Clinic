@@ -20,98 +20,88 @@ async function main() {
   });
   console.log('Created Super Admin:', superAdmin.email);
 
-  // Create Treatments
-  const treatments = await Promise.all([
-    prisma.treatment.upsert({
-      where: { id: 1 },
-      update: {},
-      create: {
-        name: 'Basic Facial',
-        description: 'A refreshing facial treatment that cleanses and rejuvenates your skin.',
-        duration: 30,
-        price: 75.00,
-        status: 'ACTIVE'
-      }
-    }),
-    prisma.treatment.upsert({
-      where: { id: 2 },
-      update: {},
-      create: {
-        name: 'Deep Cleansing Facial',
-        description: 'Deep pore cleansing facial with extraction and mask treatment.',
-        duration: 60,
-        price: 120.00,
-        status: 'ACTIVE'
-      }
-    }),
-    prisma.treatment.upsert({
-      where: { id: 3 },
-      update: {},
-      create: {
-        name: 'Anti-Aging Treatment',
-        description: 'Advanced anti-aging facial with collagen boost and firming serum.',
-        duration: 75,
-        price: 180.00,
-        status: 'ACTIVE'
-      }
-    }),
-    prisma.treatment.upsert({
-      where: { id: 4 },
-      update: {},
-      create: {
-        name: 'Acne Treatment',
-        description: 'Specialized treatment for acne-prone skin with salicylic acid.',
-        duration: 45,
-        price: 95.00,
-        status: 'ACTIVE'
-      }
-    }),
-    prisma.treatment.upsert({
-      where: { id: 5 },
-      update: {},
-      create: {
-        name: 'Chemical Peel',
-        description: 'Professional chemical peel for skin resurfacing and renewal.',
-        duration: 45,
-        price: 150.00,
-        status: 'ACTIVE'
-      }
-    }),
-    prisma.treatment.upsert({
-      where: { id: 6 },
-      update: {},
-      create: {
-        name: 'Microdermabrasion',
-        description: 'Exfoliating treatment that removes dead skin cells for smoother skin.',
-        duration: 60,
-        price: 135.00,
-        status: 'ACTIVE'
-      }
-    }),
-    prisma.treatment.upsert({
-      where: { id: 7 },
-      update: {},
-      create: {
-        name: 'LED Light Therapy',
-        description: 'Light therapy treatment for skin healing and collagen production.',
-        duration: 30,
-        price: 85.00,
-        status: 'ACTIVE'
-      }
-    }),
-    prisma.treatment.upsert({
-      where: { id: 8 },
-      update: {},
-      create: {
-        name: 'Hydrating Facial',
-        description: 'Intensive hydration treatment for dry and dehydrated skin.',
-        duration: 45,
-        price: 110.00,
-        status: 'ACTIVE'
-      }
-    })
-  ]);
-  console.log('Created Treatments:', treatments.length);
+  // Create Treatments (don't use hardcoded IDs)
+  const treatment1 = await prisma.treatment.create({
+    data: {
+      name: 'Basic Facial',
+      description: 'A refreshing facial treatment that cleanses and rejuvenates your skin.',
+      duration: 30,
+      price: 75.00,
+      status: 'ACTIVE'
+    }
+  });
+
+  const treatment2 = await prisma.treatment.create({
+    data: {
+      name: 'Deep Cleansing Facial',
+      description: 'Deep pore cleansing facial with extraction and mask treatment.',
+      duration: 60,
+      price: 120.00,
+      status: 'ACTIVE'
+    }
+  });
+
+  const treatment3 = await prisma.treatment.create({
+    data: {
+      name: 'Anti-Aging Treatment',
+      description: 'Advanced anti-aging facial with collagen boost and firming serum.',
+      duration: 75,
+      price: 180.00,
+      status: 'ACTIVE'
+    }
+  });
+
+  const treatment4 = await prisma.treatment.create({
+    data: {
+      name: 'Acne Treatment',
+      description: 'Specialized treatment for acne-prone skin with salicylic acid.',
+      duration: 45,
+      price: 95.00,
+      status: 'ACTIVE'
+    }
+  });
+
+  const treatment5 = await prisma.treatment.create({
+    data: {
+      name: 'Chemical Peel',
+      description: 'Professional chemical peel for skin resurfacing and renewal.',
+      duration: 45,
+      price: 150.00,
+      status: 'ACTIVE'
+    }
+  });
+
+  const treatment6 = await prisma.treatment.create({
+    data: {
+      name: 'Microdermabrasion',
+      description: 'Exfoliating treatment that removes dead skin cells for smoother skin.',
+      duration: 60,
+      price: 135.00,
+      status: 'ACTIVE'
+    }
+  });
+
+  const treatment7 = await prisma.treatment.create({
+    data: {
+      name: 'LED Light Therapy',
+      description: 'Light therapy treatment for skin healing and collagen production.',
+      duration: 30,
+      price: 85.00,
+      status: 'ACTIVE'
+    }
+  });
+
+  const treatment8 = await prisma.treatment.create({
+    data: {
+      name: 'Hydrating Facial',
+      description: 'Intensive hydration treatment for dry and dehydrated skin.',
+      duration: 45,
+      price: 110.00,
+      status: 'ACTIVE'
+    }
+  });
+
+  console.log('Created Treatments: 8');
 
   // Create Doctors
   const doctorPassword = await bcrypt.hash('password123', 10);
@@ -188,23 +178,23 @@ async function main() {
     }
   });
 
-  console.log('Created Doctors:', 3);
+  console.log('Created Doctors: 3');
 
-  // Assign Treatments to Doctors
+  // Assign Treatments to Doctors (use actual IDs)
   await prisma.doctorTreatment.createMany({
     data: [
-      { doctorId: doctor1.id, treatmentId: 1 },
-      { doctorId: doctor1.id, treatmentId: 2 },
-      { doctorId: doctor1.id, treatmentId: 4 },
-      { doctorId: doctor1.id, treatmentId: 5 },
-      { doctorId: doctor2.id, treatmentId: 1 },
-      { doctorId: doctor2.id, treatmentId: 3 },
-      { doctorId: doctor2.id, treatmentId: 6 },
-      { doctorId: doctor2.id, treatmentId: 7 },
-      { doctorId: doctor3.id, treatmentId: 2 },
-      { doctorId: doctor3.id, treatmentId: 3 },
-      { doctorId: doctor3.id, treatmentId: 5 },
-      { doctorId: doctor3.id, treatmentId: 8 }
+      { doctorId: doctor1.id, treatmentId: treatment1.id },
+      { doctorId: doctor1.id, treatmentId: treatment2.id },
+      { doctorId: doctor1.id, treatmentId: treatment4.id },
+      { doctorId: doctor1.id, treatmentId: treatment5.id },
+      { doctorId: doctor2.id, treatmentId: treatment1.id },
+      { doctorId: doctor2.id, treatmentId: treatment3.id },
+      { doctorId: doctor2.id, treatmentId: treatment6.id },
+      { doctorId: doctor2.id, treatmentId: treatment7.id },
+      { doctorId: doctor3.id, treatmentId: treatment2.id },
+      { doctorId: doctor3.id, treatmentId: treatment3.id },
+      { doctorId: doctor3.id, treatmentId: treatment5.id },
+      { doctorId: doctor3.id, treatmentId: treatment8.id }
     ],
     skipDuplicates: true
   });
@@ -239,8 +229,8 @@ async function main() {
       patientPhone: '+1-555-1001',
       patientEmail: 'john@example.com',
       doctorId: doctor1.id,
-      treatmentId: 1,
-      dateTime: new Date(today.getTime() + 2 * 60 * 60 * 1000), // 2 hours from now
+      treatmentId: treatment1.id,
+      dateTime: new Date(today.getTime() + 2 * 60 * 60 * 1000),
       status: 'CONFIRMED',
       notes: 'First visit, sensitive skin'
     },
@@ -249,8 +239,8 @@ async function main() {
       patientPhone: '+1-555-1002',
       patientEmail: 'jane@example.com',
       doctorId: doctor1.id,
-      treatmentId: 2,
-      dateTime: new Date(today.getTime() + 4 * 60 * 60 * 1000), // 4 hours from now
+      treatmentId: treatment2.id,
+      dateTime: new Date(today.getTime() + 4 * 60 * 60 * 1000),
       status: 'PENDING',
       notes: null
     },
@@ -259,8 +249,8 @@ async function main() {
       patientPhone: '+1-555-1003',
       patientEmail: 'alice@example.com',
       doctorId: doctor2.id,
-      treatmentId: 3,
-      dateTime: new Date(today.getTime() + 24 * 60 * 60 * 1000), // Tomorrow
+      treatmentId: treatment3.id,
+      dateTime: new Date(today.getTime() + 24 * 60 * 60 * 1000),
       status: 'CONFIRMED',
       notes: 'Anti-aging consultation'
     },
@@ -269,8 +259,8 @@ async function main() {
       patientPhone: '+1-555-1004',
       patientEmail: 'bob@example.com',
       doctorId: doctor2.id,
-      treatmentId: 7,
-      dateTime: new Date(today.getTime() + 48 * 60 * 60 * 1000), // 2 days from now
+      treatmentId: treatment7.id,
+      dateTime: new Date(today.getTime() + 48 * 60 * 60 * 1000),
       status: 'PENDING',
       notes: null
     },
@@ -279,8 +269,8 @@ async function main() {
       patientPhone: '+1-555-1005',
       patientEmail: 'carol@example.com',
       doctorId: doctor3.id,
-      treatmentId: 5,
-      dateTime: new Date(today.getTime() - 24 * 60 * 60 * 1000), // Yesterday
+      treatmentId: treatment5.id,
+      dateTime: new Date(today.getTime() - 24 * 60 * 60 * 1000),
       status: 'COMPLETED',
       notes: 'Chemical peel completed successfully'
     },
@@ -289,8 +279,8 @@ async function main() {
       patientPhone: '+1-555-1006',
       patientEmail: 'david@example.com',
       doctorId: doctor3.id,
-      treatmentId: 8,
-      dateTime: new Date(today.getTime() - 48 * 60 * 60 * 1000), // 2 days ago
+      treatmentId: treatment8.id,
+      dateTime: new Date(today.getTime() - 48 * 60 * 60 * 1000),
       status: 'COMPLETED',
       notes: null
     },
@@ -299,8 +289,8 @@ async function main() {
       patientPhone: '+1-555-1007',
       patientEmail: 'emma@example.com',
       doctorId: doctor1.id,
-      treatmentId: 4,
-      dateTime: new Date(today.getTime() - 72 * 60 * 60 * 1000), // 3 days ago
+      treatmentId: treatment4.id,
+      dateTime: new Date(today.getTime() - 72 * 60 * 60 * 1000),
       status: 'CANCELLED',
       notes: 'Patient cancelled due to illness'
     }
@@ -317,91 +307,28 @@ async function main() {
     {
       title: '10 Tips for Healthy Glowing Skin',
       slug: '10-tips-for-healthy-glowing-skin',
-      content: `
-        <h2>Introduction</h2>
-        <p>Achieving healthy, glowing skin doesn't have to be complicated. Here are our top 10 tips for maintaining beautiful skin.</p>
-        
-        <h3>1. Stay Hydrated</h3>
-        <p>Drink at least 8 glasses of water daily to keep your skin hydrated from the inside out.</p>
-        
-        <h3>2. Cleanse Twice Daily</h3>
-        <p>Cleanse your face in the morning and evening to remove dirt, oil, and makeup.</p>
-        
-        <h3>3. Use Sunscreen</h3>
-        <p>Apply SPF 30 or higher sunscreen every day, even on cloudy days.</p>
-        
-        <h3>4. Moisturize Regularly</h3>
-        <p>Use a moisturizer suitable for your skin type to maintain skin barrier.</p>
-        
-        <h3>5. Get Enough Sleep</h3>
-        <p>Aim for 7-9 hours of quality sleep for skin repair and regeneration.</p>
-      `,
+      content: `<h2>Introduction</h2><p>Achieving healthy, glowing skin doesn't have to be complicated...</p>`,
       authorId: superAdmin.id,
       status: 'PUBLISHED'
     },
     {
       title: 'Understanding Different Skin Types',
       slug: 'understanding-different-skin-types',
-      content: `
-        <h2>Know Your Skin Type</h2>
-        <p>Understanding your skin type is the first step to proper skincare.</p>
-        
-        <h3>Normal Skin</h3>
-        <p>Well-balanced skin that is neither too oily nor too dry.</p>
-        
-        <h3>Oily Skin</h3>
-        <p>Produces excess sebum, often appears shiny with enlarged pores.</p>
-        
-        <h3>Dry Skin</h3>
-        <p>Lacks moisture, may feel tight and show flakes or rough patches.</p>
-        
-        <h3>Combination Skin</h3>
-        <p>Mix of oily and dry areas, typically oily T-zone with dry cheeks.</p>
-        
-        <h3>Sensitive Skin</h3>
-        <p>Reacts easily to products, prone to redness and irritation.</p>
-      `,
+      content: `<h2>Know Your Skin Type</h2><p>Understanding your skin type is the first step...</p>`,
       authorId: superAdmin.id,
       status: 'PUBLISHED'
     },
     {
       title: 'The Benefits of Regular Facials',
       slug: 'benefits-of-regular-facials',
-      content: `
-        <h2>Why You Should Get Regular Facials</h2>
-        <p>Professional facials offer numerous benefits for your skin health.</p>
-        
-        <h3>Deep Cleansing</h3>
-        <p>Professional extraction removes blackheads and unclogs pores.</p>
-        
-        <h3>Anti-Aging Benefits</h3>
-        <p>Stimulates collagen production and reduces fine lines.</p>
-        
-        <h3>Stress Relief</h3>
-        <p>Relaxing facial massage reduces stress and promotes well-being.</p>
-        
-        <h3>Expert Advice</h3>
-        <p>Get personalized skincare recommendations from professionals.</p>
-      `,
+      content: `<h2>Why You Should Get Regular Facials</h2><p>Professional facials offer numerous benefits...</p>`,
       authorId: doctor1User.id,
       status: 'PUBLISHED'
     },
     {
       title: 'Winter Skincare Tips',
       slug: 'winter-skincare-tips',
-      content: `
-        <h2>Protect Your Skin This Winter</h2>
-        <p>Cold weather can be harsh on your skin. Here's how to protect it.</p>
-        
-        <h3>Switch to Heavier Moisturizer</h3>
-        <p>Use cream-based moisturizers instead of lotions.</p>
-        
-        <h3>Don't Skip Sunscreen</h3>
-        <p>UV rays are still present in winter and can reflect off snow.</p>
-        
-        <h3>Use a Humidifier</h3>
-        <p>Combat dry indoor air with a humidifier.</p>
-      `,
+      content: `<h2>Protect Your Skin This Winter</h2><p>Cold weather can be harsh on your skin...</p>`,
       authorId: doctor2User.id,
       status: 'DRAFT'
     }
