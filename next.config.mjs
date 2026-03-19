@@ -3,14 +3,17 @@ const nextConfig = {
   images: { 
     unoptimized: true 
   },
-  // This fixes everything
   output: 'standalone',
   
-  // Skip static generation for all pages
-  staticPageGenerationTimeout: 0,
+  // Disable all static page generation
+  experimental: {
+    isrFlushToDisk: false,
+  },
   
-  // Disable static export
-  trailingSlash: false,
+  // Force all pages to be server-rendered
+  async headers() {
+    return [];
+  },
 };
 
 export default nextConfig;

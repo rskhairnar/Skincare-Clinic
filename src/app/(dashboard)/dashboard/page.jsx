@@ -5,7 +5,7 @@ import AdminDashboard from '@/components/dashboard/AdminDashboard';
 import DoctorDashboard from '@/components/dashboard/DoctorDashboard';
 
 export const dynamic = 'force-dynamic';
-export const revalidate = 0;
+
 
 export default function DashboardPage() {
   const { user } = useAuthStore();
