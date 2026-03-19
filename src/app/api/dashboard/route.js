@@ -13,6 +13,7 @@ export async function GET(req) {
         { status: 401 },
       );
     }
+    
 
     const decoded = verifyToken(token);
 
