@@ -2,8 +2,6 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { verifyToken } from "@/lib/auth";
 
-// Force dynamic for API routes
-export const dynamic = "force-dynamic";
 
 export async function GET(req) {
   try {
