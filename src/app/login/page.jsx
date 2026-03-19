@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic';
 'use client';
 
 import { useState } from 'react';
@@ -12,7 +13,7 @@ import { Label } from '@/components/ui/label';
 import { toast } from '@/components/ui/use-toast';
 import { Loader2 } from 'lucide-react';
 
-export const dynamic = 'force-dynamic';
+
 
 
 export default function LoginPage() {
