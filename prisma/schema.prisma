@@ -1,3 +1,5 @@
+// prisma/schema.prisma
+
 generator client {
   provider = "prisma-client-js"
 }
@@ -6,7 +8,6 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
-
 
 model User {
   id        Int      @id @default(autoincrement())
@@ -29,23 +30,40 @@ enum Role {
   DOCTOR_ADMIN
 }
 
-model Doctor {
-  id              Int      @id @default(autoincrement())
-  userId          Int      @unique @map("user_id")
-  specialization  String
-  experience      Int
-  profileImage    String?  @map("profile_image")
-  phone           String
-  address         String?
-  status          Status   @default(ACTIVE)
-  createdAt       DateTime @default(now()) @map("created_at")
-  updatedAt       DateTime @updatedAt @map("updated_at")
-  deletedAt       DateTime? @map("deleted_at")
+model Specialization {
+  id          Int       @id @default(autoincrement())
+  name        String    @unique
+  description String?
+  icon        String?   // Optional: store icon name for UI
+  status      Status    @default(ACTIVE)
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+  deletedAt   DateTime? @map("deleted_at")
 
-  user            User     @relation(fields: [userId], references: [id])
-  treatments      DoctorTreatment[]
-  appointments    Appointment[]
-  availability    Availability[]
+  doctors     Doctor[]
+  treatments  Treatment[]  // One specialization has many treatments
+
+  @@map("specializations")
+}
+
+model Doctor {
+  id               Int      @id @default(autoincrement())
+  userId           Int      @unique @map("user_id")
+  specializationId Int      @map("specialization_id")
+  experience       Int
+  profileImage     String?  @map("profile_image")
+  phone            String
+  address          String?
+  status           Status   @default(ACTIVE)
+  createdAt        DateTime @default(now()) @map("created_at")
+  updatedAt        DateTime @updatedAt @map("updated_at")
+  deletedAt        DateTime? @map("deleted_at")
+
+  user             User           @relation(fields: [userId], references: [id])
+  specialization   Specialization @relation(fields: [specializationId], references: [id])
+  treatments       DoctorTreatment[]
+  appointments     Appointment[]
+  availability     Availability[]
 
   @@map("doctors")
 }
@@ -56,18 +74,20 @@ enum Status {
 }
 
 model Treatment {
-  id          Int      @id @default(autoincrement())
-  name        String
-  description String
-  duration    Int
-  price       Decimal  @db.Decimal(10, 2)
-  status      Status   @default(ACTIVE)
-  createdAt   DateTime @default(now()) @map("created_at")
-  updatedAt   DateTime @updatedAt @map("updated_at")
-  deletedAt   DateTime? @map("deleted_at")
+  id               Int      @id @default(autoincrement())
+  name             String
+  description      String
+  duration         Int
+  price            Decimal  @db.Decimal(10, 2)
+  specializationId Int      @map("specialization_id")  // NEW: Link to specialization
+  status           Status   @default(ACTIVE)
+  createdAt        DateTime @default(now()) @map("created_at")
+  updatedAt        DateTime @updatedAt @map("updated_at")
+  deletedAt        DateTime? @map("deleted_at")
 
-  doctors      DoctorTreatment[]
-  appointments Appointment[]
+  specialization   Specialization @relation(fields: [specializationId], references: [id])  // NEW
+  doctors          DoctorTreatment[]
+  appointments     Appointment[]
 
   @@map("treatments")
 }

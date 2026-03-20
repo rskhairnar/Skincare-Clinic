@@ -1,30 +1,53 @@
-import jwt from "jsonwebtoken";
-import bcrypt from "bcryptjs";
+// lib/auth.js
 
-export const hashPassword = async (password) => {
-  return await bcrypt.hash(password, 10);
-};
+import jwt from 'jsonwebtoken';
+import bcrypt from 'bcryptjs';
 
-export const comparePassword = async (password, hashedPassword) => {
-  return await bcrypt.compare(password, hashedPassword);
-};
+const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
+const JWT_EXPIRES_IN = '7d'; // Token valid for 7 days
 
-export const generateToken = (user) => {
+export function generateToken(user) {
   return jwt.sign(
     {
       id: user.id,
       email: user.email,
       role: user.role,
+      name: user.name,
     },
-    process.env.JWT_SECRET,
-    { expiresIn: "7d" },
+    JWT_SECRET,
+    { expiresIn: JWT_EXPIRES_IN }
   );
-};
+}
 
-export const verifyToken = (token) => {
+export function verifyToken(token) {
   try {
-    return jwt.verify(token, process.env.JWT_SECRET);
+    if (!token) {
+      console.log('No token provided');
+      return null;
+    }
+
+    // Remove Bearer prefix if present
+    const cleanToken = token.replace('Bearer ', '');
+    
+    const decoded = jwt.verify(cleanToken, JWT_SECRET);
+    return decoded;
   } catch (error) {
+    console.error('Token verification error:', error.message);
+    
+    if (error.name === 'TokenExpiredError') {
+      console.log('Token has expired');
+    } else if (error.name === 'JsonWebTokenError') {
+      console.log('Invalid token');
+    }
+    
     return null;
   }
-};
+}
+
+export async function hashPassword(password) {
+  return bcrypt.hash(password, 10);
+}
+
+export async function comparePassword(password, hashedPassword) {
+  return bcrypt.compare(password, hashedPassword);
+}

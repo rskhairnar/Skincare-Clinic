@@ -120,7 +120,49 @@
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+
+@layer utilities {
+
+  /* Smooth sidebar animation */
+  .sidebar-enter {
+    transform: translateX(-100%);
+  }
+
+  .sidebar-enter-active {
+    transform: translateX(0);
+    transition: transform 300ms ease-in-out;
+  }
+
+  .sidebar-exit {
+    transform: translateX(0);
+  }
+
+  .sidebar-exit-active {
+    transform: translateX(-100%);
+    transition: transform 300ms ease-in-out;
+  }
+
+  /* Custom scrollbar for sidebar */
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #e5e7eb;
+    border-radius: 20px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #d1d5db;
   }
 }

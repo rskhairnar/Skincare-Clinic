@@ -1,9 +1,8 @@
+// app/api/auth/login/route.js
+
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { comparePassword, generateToken } from '@/lib/auth';
-
-// Force dynamic for API routes
-
 
 export async function POST(req) {
   try {
@@ -11,7 +10,13 @@ export async function POST(req) {
 
     const user = await prisma.user.findUnique({
       where: { email },
-      include: { doctor: true }
+      include: { 
+        doctor: {
+          include: {
+            specialization: true  // Include specialization details
+          }
+        }
+      }
     });
 
     if (!user || user.deletedAt) {

@@ -1,9 +1,8 @@
-
 'use client';
 import * as React from "react"
 
-const TOAST_LIMIT = 1
-const TOAST_REMOVE_DELAY = 1000000
+const TOAST_LIMIT = 3
+const TOAST_REMOVE_DELAY = 5000 // 5 seconds auto-dismiss
 
 let count = 0
 
@@ -30,9 +29,19 @@ const addToRemoveQueue = (toastId) => {
   toastTimeouts.set(toastId, timeout)
 }
 
+// Function to clear timeout (for manual dismiss)
+const clearFromRemoveQueue = (toastId) => {
+  if (toastTimeouts.has(toastId)) {
+    clearTimeout(toastTimeouts.get(toastId))
+    toastTimeouts.delete(toastId)
+  }
+}
+
 export const reducer = (state, action) => {
   switch (action.type) {
     case "ADD_TOAST":
+      // Start auto-dismiss timer when toast is added
+      addToRemoveQueue(action.toast.id)
       return {
         ...state,
         toasts: [action.toast, ...state.toasts].slice(0, TOAST_LIMIT),
@@ -50,11 +59,7 @@ export const reducer = (state, action) => {
       const { toastId } = action
 
       if (toastId) {
-        addToRemoveQueue(toastId)
-      } else {
-        state.toasts.forEach((toast) => {
-          addToRemoveQueue(toast.id)
-        })
+        clearFromRemoveQueue(toastId)
       }
 
       return {
@@ -69,6 +74,7 @@ export const reducer = (state, action) => {
         ),
       }
     }
+
     case "REMOVE_TOAST":
       if (action.toastId === undefined) {
         return {
@@ -80,6 +86,9 @@ export const reducer = (state, action) => {
         ...state,
         toasts: state.toasts.filter((t) => t.id !== action.toastId),
       }
+
+    default:
+      return state
   }
 }
 
@@ -102,7 +111,14 @@ function toast({ ...props }) {
       type: "UPDATE_TOAST",
       toast: { ...props, id },
     })
-  const dismiss = () => dispatch({ type: "DISMISS_TOAST", toastId: id })
+
+  const dismiss = () => {
+    dispatch({ type: "DISMISS_TOAST", toastId: id })
+    // Remove immediately after dismiss animation
+    setTimeout(() => {
+      dispatch({ type: "REMOVE_TOAST", toastId: id })
+    }, 300)
+  }
 
   dispatch({
     type: "ADD_TOAST",
@@ -134,12 +150,17 @@ function useToast() {
         listeners.splice(index, 1)
       }
     }
-  }, [state])
+  }, [])
 
   return {
     ...state,
     toast,
-    dismiss: (toastId) => dispatch({ type: "DISMISS_TOAST", toastId }),
+    dismiss: (toastId) => {
+      dispatch({ type: "DISMISS_TOAST", toastId })
+      setTimeout(() => {
+        dispatch({ type: "REMOVE_TOAST", toastId })
+      }, 300)
+    },
   }
 }
 
